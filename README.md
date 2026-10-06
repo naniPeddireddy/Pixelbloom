@@ -1,2 +1,2 @@
-# frontend
-This is project
+# Pixelbloom
+This is PixelBloom

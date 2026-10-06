@@ -3,43 +3,205 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PixelPulse</title>
+    <title>Pixelbloom</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <header>
-        <h1>PixelPulse</h1>
-        <p>Search for images from Wikimedia Commons</p>
-    </header>
+    <!-- Live background and mouse effects -->
+    <div id="bg" aria-hidden="true">
+        <span class="blob b1"></span>
+        <span class="blob b2"></span>
+        <span class="blob b3"></span>
+        <span class="blob b4"></span>
+    </div>
+    <div id="spot" aria-hidden="true"></div>
+    <canvas id="fx" aria-hidden="true"></canvas>
+
+    <!-- Menu -->
+    <nav id="nav">
+        <a href="#home" class="brand"><span class="dot"></span>Pixelbloom</a>
+
+        <button id="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
+
+        <ul id="menu">
+            <li><a href="#home" data-page="home">Home</a></li>
+            <li><a href="#saved" data-page="saved">Saved images <span id="saved-count"></span></a></li>
+            <li id="nav-login"><a href="#login" data-page="login">Log in</a></li>
+            <li id="nav-user" hidden>
+                <span id="user-name"></span>
+                <button type="button" id="logout">Log out</button>
+            </li>
+            <li><button id="theme-toggle" type="button" aria-label="Toggle dark mode">Dark mode</button></li>
+        </ul>
+    </nav>
 
     <main>
 
-        <!-- Search Form -->
-        <form id="search-form">
-            <input
-                type="text"
-                id="search-input"
-                placeholder="Search for images..."
-                autocomplete="off"
-                required
-            >
-            <button type="submit">Search</button>
-        </form>
+        <!-- HOME PAGE -->
+        <section id="view-home">
+            <header>
+                <h1><span class="dot"></span>PixelPulse</h1>
+                <p>Search for images from Wikimedia Commons</p>
+            </header>
 
-        <!-- Results will appear here -->
-        <section id="results"></section>
+            <form id="search-form">
+                <input type="text" id="search-input" placeholder="Search for images... (press / to focus)" autocomplete="off">
+                <button type="submit">Search</button>
+            </form>
+
+            <div id="options">
+                <label>Sort
+                    <select id="sort">
+                        <option value="relevance">Relevance</option>
+                        <option value="create_timestamp_desc">Newest</option>
+                    </select>
+                </label>
+
+                <label>Per page
+                    <select id="count">
+                        <option value="12">12</option>
+                        <option value="24" selected>24</option>
+                        <option value="48">48</option>
+                    </select>
+                </label>
+
+                <label>Size
+                    <select id="size">
+                        <option value="all">Any</option>
+                        <option value="small">Small (under 800px)</option>
+                        <option value="medium">Medium (800-1999px)</option>
+                        <option value="large">Large (2000px+)</option>
+                    </select>
+                </label>
+
+                <label>File type
+                    <select id="type">
+                        <option value="all">Any</option>
+                        <option value="image/jpeg">JPG</option>
+                        <option value="image/png">PNG</option>
+                        <option value="image/svg+xml">SVG</option>
+                        <option value="image/gif">GIF</option>
+                    </select>
+                </label>
+
+                <label>License
+                    <select id="license">
+                        <option value="all">Any</option>
+                        <option value="pd">Public domain</option>
+                        <option value="cc">Creative Commons</option>
+                    </select>
+                </label>
+
+                <label>Shape
+                    <select id="shape">
+                        <option value="all">Any</option>
+                        <option value="landscape">Landscape</option>
+                        <option value="portrait">Portrait</option>
+                        <option value="square">Square</option>
+                    </select>
+                </label>
+
+                <label>Columns
+                    <select id="columns">
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4" selected>4</option>
+                    </select>
+                </label>
+
+                <label class="check">
+                    <input type="checkbox" id="infinite"> Infinite scroll
+                </label>
+            </div>
+
+            <div id="toolbar">
+                <button type="button" id="surprise">Surprise me</button>
+            </div>
+
+            <div id="history-wrap" hidden>
+                <span>Recent</span>
+                <div id="history"></div>
+                <button type="button" id="clear-history" class="link-btn">Clear</button>
+            </div>
+
+            <p id="status" role="status"></p>
+
+            <div id="results" class="grid"></div>
+
+            <div id="sentinel"></div>
+
+            <div class="more-wrap">
+                <button id="load-more" type="button" hidden>Load more</button>
+            </div>
+        </section>
+
+        <!-- SAVED IMAGES PAGE -->
+        <section id="view-saved" hidden>
+            <h1>Saved images</h1>
+            <p id="saved-status" role="status"></p>
+            <div id="saved-results" class="grid"></div>
+        </section>
+
+        <!-- LOGIN PAGE -->
+        <section id="view-login" hidden>
+            <div class="auth-card">
+                <h1 id="auth-title">Log in</h1>
+                <p id="auth-notice"></p>
+
+                <div class="tabs" role="tablist">
+                    <button type="button" id="tab-login" role="tab" class="active">Log in</button>
+                    <button type="button" id="tab-register" role="tab">Create account</button>
+                </div>
+
+                <form id="auth-form">
+                    <label id="name-field" hidden>Name
+                        <input type="text" id="auth-name" autocomplete="name">
+                    </label>
+
+                    <label>Email
+                        <input type="email" id="auth-email" required autocomplete="email">
+                    </label>
+
+                    <label>Password
+                        <input type="password" id="auth-password" required autocomplete="current-password">
+                    </label>
+
+                    <p id="auth-error" role="alert"></p>
+
+                    <button type="submit" id="auth-submit">Log in</button>
+                </form>
+
+                <p class="small">Accounts are stored only in this browser. <a href="#home">Continue as guest</a></p>
+            </div>
+        </section>
 
     </main>
 
     <!-- Lightbox -->
-    <div id="lightbox" class="hidden">
-        <button id="lightbox-close" aria-label="Close">&times;</button>
-        <figure>
-            <img id="lightbox-img" src="" alt="">
-            <figcaption id="lightbox-caption"></figcaption>
-        </figure>
+    <div id="lightbox" hidden>
+        <div class="lb-inner" role="dialog" aria-modal="true" aria-label="Image preview">
+            <button type="button" id="lb-close" aria-label="Close">&times;</button>
+
+            <div class="lb-stage">
+                <button type="button" id="lb-prev" class="lb-nav" aria-label="Previous image">&lsaquo;</button>
+                <img id="lb-img" alt="">
+                <button type="button" id="lb-next" class="lb-nav" aria-label="Next image">&rsaquo;</button>
+            </div>
+
+            <div class="lb-info">
+                <h2 id="lb-title"></h2>
+                <p id="lb-meta"></p>
+                <p id="lb-desc"></p>
+                <div class="lb-actions">
+                    <button type="button" id="lb-fav" class="fav-btn">Save</button>
+                    <button type="button" id="lb-download">Download</button>
+                    <button type="button" id="lb-copy">Copy link</button>
+                    <a id="lb-page" target="_blank" rel="noopener">Open on Commons</a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
