@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelPulse</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>PixelPulse</h1>
+        <p>Search for images from Wikimedia Commons</p>
+    </header>
+
+    <main>
+
+        <!-- Search Form -->
+        <form id="search-form">
+            <input
+                type="text"
+                id="search-input"
+                placeholder="Search for images..."
+                autocomplete="off"
+                required
+            >
+            <button type="submit">Search</button>
+        </form>
+
+        <!-- Results will appear here -->
+        <section id="results"></section>
+
+    </main>
+
+    <!-- Lightbox -->
+    <div id="lightbox" class="hidden">
+        <button id="lightbox-close" aria-label="Close">&times;</button>
+        <figure>
+            <img id="lightbox-img" src="" alt="">
+            <figcaption id="lightbox-caption"></figcaption>
+        </figure>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
